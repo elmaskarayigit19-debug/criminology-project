@@ -1,0 +1,73 @@
+---
+title: "Homicide Trends in European Cities (2000–2007)"
+author: "290353"
+format: pdf
+editor: visual
+---
+
+```{r}
+library(dplyr)
+library(ggplot2)
+```
+
+```{r}
+data <- read.csv("estat_crim_hom_city_filtered_en.csv.gz")
+```
+
+```{r}
+clean_data <- data %>%
+  select(city = Geopolitical.entity..declaring., 
+         year = TIME_PERIOD, 
+         homicides = OBS_VALUE)
+
+head(clean_data)
+```
+
+```{r}
+ggplot(clean_data, aes(x = year, y = homicides, color = city)) +
+  geom_line(size = 1.2) +
+  geom_point() +
+  labs(
+    title = "Homicide Trends (2000–2007)",
+    x = "Year",
+    y = "Number of Homicides",
+    color = "City"
+  ) +
+  theme_minimal()
+```
+
+\newpage
+
+```{r}
+avg_data <- clean_data %>%
+  group_by(city) %>%
+  summarise(avg_homicides = mean(homicides, na.rm = TRUE))
+
+ggplot(avg_data, aes(x = city, y = avg_homicides, fill = city)) +
+  geom_col() +
+  labs(
+    title = "Average Homicides per City (2000–2007)",
+    x = "City",
+    y = "Average Number of Homicides"
+  ) +
+  theme_minimal()
+```
+
+\newpage
+
+```{r}
+total_by_year <- clean_data %>%
+  group_by(year) %>%
+  summarise(total = sum(homicides, na.rm = TRUE))
+
+ggplot(total_by_year, aes(x = year, y = total)) +
+  geom_line(color = "steelblue", size = 1.2) +
+  geom_point(color = "steelblue") +
+  labs(
+    title = "Total Homicides Across All Cities (2000–2007)",
+    x = "Year",
+    y = "Total Number of Homicides"
+  ) +
+  theme_minimal()
+```
+İ

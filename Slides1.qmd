@@ -1,0 +1,91 @@
+---
+title: "Homicide Trends"
+author: "290353"
+format: revealjs
+---
+
+## Introduction
+
+This slide deck summarizes key insights from homicide data across four European cities between 2000 and 2007.
+
+---
+
+## Dataset Overview
+
+- **Source**: Eurostat (`estat_crim_hom_city_filtered_en.csv.gz`)
+- **Cities**: Berlin, Warsaw, Ankara, London
+- **Years**: 2000 to 2007
+
+---
+
+## Trend Over Time
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+data <- read.csv("estat_crim_hom_city_filtered_en.csv.gz")
+
+clean_data <- data %>%
+  select(city = Geopolitical.entity..declaring., year = TIME_PERIOD, homicides = OBS_VALUE)
+
+ggplot(clean_data, aes(x = year, y = homicides, color = city)) +
+  geom_line(size = 1.2) +
+  geom_point() +
+  labs(
+    title = "Homicide Trends (2000–2007)",
+    x = "Year",
+    y = "Number of Homicides",
+    color = "City"
+  ) +
+  theme_minimal()
+```
+
+---
+
+## Average Homicides per City
+
+```{r}
+avg_data <- clean_data %>%
+  group_by(city) %>%
+  summarise(avg_homicides = mean(homicides, na.rm = TRUE))
+
+ggplot(avg_data, aes(x = city, y = avg_homicides, fill = city)) +
+  geom_col() +
+  labs(
+    title = "Average Homicides per City (2000–2007)",
+    x = "City",
+    y = "Average Number of Homicides"
+  ) +
+  theme_minimal()
+```
+
+---
+
+## Total Homicides by Year
+
+```{r}
+total_by_year <- clean_data %>%
+  group_by(year) %>%
+  summarise(total = sum(homicides, na.rm = TRUE))
+
+ggplot(total_by_year, aes(x = year, y = total)) +
+  geom_line(color = "steelblue", size = 1.2) +
+  geom_point(color = "steelblue") +
+  labs(
+    title = "Total Homicides Across All Cities (2000–2007)",
+    x = "Year",
+    y = "Total Number of Homicides"
+  ) +
+  theme_minimal()
+```
+
+---
+
+## Conclusion
+
+- Berlin showed a significant decline in homicides  
+- Ankara had consistently high numbers  
+- Overall homicide levels in selected cities decreased
+
+Thank you!
